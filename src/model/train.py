@@ -4,13 +4,15 @@ import argparse
 import glob
 import os
 import pandas as pd
+import mlflow
+import mlflow.sklearn 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-
 
 # define functions
 def main(args):
     # TO DO: enable autologging
+    mlflow.autolog()
 
 
     # read data
@@ -42,6 +44,7 @@ def split_data(df):
         X, y, test_size=0.3, random_state=0)
     data = {"train": {"X": X_train, "y": y_train},
             "test": {"X": X_test, "y": y_test}}
+    return data
 
 def train_model(reg_rate, X_train, X_test, y_train, y_test):
     # train model
