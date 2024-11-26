@@ -3,10 +3,9 @@
 import argparse
 import glob
 import os
-
 import pandas as pd
-
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 
 # define functions
@@ -17,8 +16,8 @@ def main(args):
     # read data
     df = get_csvs_df(args.training_data)
 
-    # split data
-    X_train, X_test, y_train, y_test = split_data(df)
+    # Split data
+    data = split_data(df)
 
     # train model
     train_model(args.reg_rate, X_train, X_test, y_train, y_test)
@@ -34,11 +33,20 @@ def get_csvs_df(path):
 
 
 # TO DO: add function to split data
+def split_data(df):
+    X = df[['Pregnancies','PlasmaGlucose','DiastolicBloodPressure','TricepsThickness',
+            'SerumInsulin','BMI','DiabetesPedigree','Age']].values
+    y = df['Diabetic'].values
 
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=0)
+    data = {"train": {"X": X_train, "y": y_train},
+            "test": {"X": X_test, "y": y_test}}
 
 def train_model(reg_rate, X_train, X_test, y_train, y_test):
     # train model
     LogisticRegression(C=1/reg_rate, solver="liblinear").fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
 
 def parse_args():
@@ -51,11 +59,9 @@ def parse_args():
     parser.add_argument("--reg_rate", dest='reg_rate',
                         type=float, default=0.01)
 
-    # parse args
-    args = parser.parse_args()
-
     # return args
-    return args
+    return parser.parse_args()
+
 
 # run script
 if __name__ == "__main__":
